@@ -10,16 +10,18 @@ function Header() {
 }
 
 function Create(props) {
-  const [title, setTitle] = useState("")
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
 
   return (
     <div>
-      <h4>What is your main focus today?</h4>
+      <h4>Add a task</h4>
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          props.onCreate(title)
-          setTitle("")
+          props.onCreate(title, date)
+          setTitle("");
+          setDate("")
         }}>
         <input
           type='text'
@@ -28,6 +30,12 @@ function Create(props) {
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}></input>
+        <input
+          type="date"
+          name="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          ></input>
         <input type='submit'></input>
       </form>
     </div>
@@ -40,6 +48,7 @@ function TodoList(props) {
   return (
     <div className='todo-list'>
       <span className={isDone ? 'done-todo': null}>{props.todo.title}</span>
+      <span>{props.todo.date}</span>
       <button onClick={() => {
         props.onCheckHandler(props.todo.id, !isDone);
         setIsDone(!isDone);
@@ -51,7 +60,8 @@ function TodoList(props) {
 }
 
 function Edit(props) {
-  const [editTitle, setEditTitle] = useState(props.todo.title)
+  const [editTitle, setEditTitle] = useState(props.todo.title);
+  const [editDate, setEditDate] = useState(props.todo.date);
 
   return (
     <div className='edit-todo'>
@@ -60,20 +70,26 @@ function Edit(props) {
         className='edit-form'
         onSubmit={(e) => {
           e.preventDefault()
-          props.onEdit(editTitle)
+          props.onEdit(editTitle, editDate)
         }}>
         <input
           type='text'
           name='title'
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}></input>
+        <input
+          type="date"
+          name="date"
+          value={editDate}
+          onChange={(e) => setEditDate(e.target.value)}
+          ></input>
         <input type='submit'></input>
       </form>
     </div>
   )
 }
 function App() {
-  const [todos, setTodos] = useState([{ id: 1, title: "Pick up kids" , done: false}]);
+  const [todos, setTodos] = useState([{ id: 1, title: "Pick up kids", date: "2024-03-03", done: false}]);
   const [nextId, setNextId] = useState(2);
   const [mode, setMode] = useState(null);
   const [selectedTodo, setSelectedTodo] = useState();
@@ -85,9 +101,9 @@ function App() {
       {mode !== "EDIT" ? (
         <>
           <Create
-            onCreate={(_title) => {
+            onCreate={(_title, _date) => {
               const newTodos = [...todos];
-              const newTodo = { id: nextId, title: _title , done: false};
+              const newTodo = { id: nextId, title: _title , date: _date, done: false};
               newTodos.push(newTodo);
               setTodos(newTodos);
               setNextId(nextId + 1);
@@ -126,10 +142,10 @@ function App() {
       {mode === "EDIT" ? (
         <Edit
           todo={selectedTodo}
-          onEdit={(_title) => {
+          onEdit={(_title, _date) => {
             const newTodos = todos.map((todo) =>
               todo === selectedTodo
-                ? Object.assign(todo, { title: _title })
+                ? Object.assign(todo, { title: _title, date: _date })
                 : todo
             )
             setTodos(newTodos)
