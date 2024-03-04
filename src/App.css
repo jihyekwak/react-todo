@@ -1,3 +1,7 @@
 .App {
   text-align: center;
 }
+
+.done-todo {
+  text-decoration: line-through;
+}

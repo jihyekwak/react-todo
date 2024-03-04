@@ -35,9 +35,15 @@ function Create(props) {
 }
 
 function TodoList(props) {
+  const [isDone, setIsDone] = useState(false);
+
   return (
     <div className='todo-list'>
-      <span>{props.todo.title}</span>
+      <span className={isDone ? 'done-todo': null}>{props.todo.title}</span>
+      <button onClick={() => {
+        props.onCheckHandler(props.todo.id, !isDone);
+        setIsDone(!isDone);
+        }}>Done</button>
       <button onClick={() => props.onEditHandler(props.todo.id)}>Edit</button>
       <button onClick={() => props.onDelete(props.todo.id)}>Delete</button>
     </div>
@@ -67,10 +73,10 @@ function Edit(props) {
   )
 }
 function App() {
-  const [todos, setTodos] = useState([{ id: 1, title: "Pick up kids" }])
-  const [nextId, setNextId] = useState(2)
-  const [mode, setMode] = useState(null)
-  const [selectedTodo, setSelectedTodo] = useState()
+  const [todos, setTodos] = useState([{ id: 1, title: "Pick up kids" , done: false}]);
+  const [nextId, setNextId] = useState(2);
+  const [mode, setMode] = useState(null);
+  const [selectedTodo, setSelectedTodo] = useState();
 
   return (
     <div className='App'>
@@ -80,11 +86,11 @@ function App() {
         <>
           <Create
             onCreate={(_title) => {
-              const newTodos = [...todos]
-              const newTodo = { id: nextId, title: _title }
-              newTodos.push(newTodo)
-              setTodos(newTodos)
-              setNextId(nextId + 1)
+              const newTodos = [...todos];
+              const newTodo = { id: nextId, title: _title , done: false};
+              newTodos.push(newTodo);
+              setTodos(newTodos);
+              setNextId(nextId + 1);
             }}></Create>
 
           <div>
@@ -95,16 +101,21 @@ function App() {
                   <TodoList
                     todo={todo}
                     onDelete={(_id) => {
-                      const newTodos = todos.filter((todo) => todo.id !== _id)
-                      setTodos(newTodos)
+                      const newTodos = todos.filter((todo) => todo.id !== _id);
+                      setTodos(newTodos);
                     }}
                     onEditHandler={(_id) => {
                       const selectedTodo = todos.find(
-                        (todo) => todo.id === Number(_id)
+                        (todo) => todo.id === _id
                       )
-                      setSelectedTodo(selectedTodo)
-                      setMode("EDIT")
-                    }}></TodoList>
+                      setSelectedTodo(selectedTodo);
+                      setMode("EDIT");
+                    }}
+                    onCheckHandler={(_id, isDone) => {
+                      const newTodos = todos.map(todo => todo.id === _id ? Object.assign(todo, {done: isDone}): todo);
+                      setTodos(newTodos);
+                    }}
+                    ></TodoList>
                 </li>
               ))}
             </ul>
