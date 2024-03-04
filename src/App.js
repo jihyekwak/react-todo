@@ -25,7 +25,8 @@ function Create(props) {
 function TodoList(props) {
   return(
     <div className='todo-list'>
-      <p>{props.todo.title}</p>
+      <span>{props.todo.title}</span>
+      <button onClick={()=>props.onDelete(props.todo.id)}>Delete</button>
     </div>
   )
 }
@@ -45,7 +46,10 @@ function App() {
       } }></Create>
 
       <ul>
-        {todos.map(todo => <li key={todo.id}><TodoList  todo={todo}></TodoList></li>)}
+        {todos.map(todo => <li key={todo.id}><TodoList  todo={todo} onDelete={(_id)=>{
+          const newTodos = todos.filter(todo => todo.id !== _id);
+          setTodos(newTodos);
+        }}></TodoList></li>)}
       </ul>
 
     </div>
