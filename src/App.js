@@ -8,18 +8,27 @@ function Header() {
 }
 
 function Create(props) {
+  const [title, setTitle] = useState('');
+
   return(<div>
     <form onSubmit={(e) => {
       e.preventDefault();
-      const title = e.target.title.value
-      props.onCreate(title)
+      props.onCreate(title);
+      setTitle('')
     }}>
-      <input type="text" name='title' placeholder='Add to do list...'></input>
+      <input type="text" name='title' placeholder='Add to do list...' required value={title} onChange={(e)=> setTitle(e.target.value)}></input>
       <input type="submit"></input>
     </form>
   </div>)
 }
 
+function TodoList(props) {
+  return(
+    <div className='todo-list'>
+      <p>{props.todo.title}</p>
+    </div>
+  )
+}
 function App() {
   const [todos, setTodos] = useState([{id:1, title: 'Pick up kids'}]);
   const [nextId, setNextId] = useState(2);
@@ -34,6 +43,11 @@ function App() {
         setTodos(newTodos);
         setNextId(nextId+1)
       } }></Create>
+
+      <ul>
+        {todos.map(todo => <li key={todo.id}><TodoList  todo={todo}></TodoList></li>)}
+      </ul>
+
     </div>
   );
 }
